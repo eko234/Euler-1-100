@@ -1,0 +1,30 @@
+JOB "euler-exe +RTS -N -h"
+DATE "Wed Jul 22 18:08 2020"
+SAMPLE_UNIT "seconds"
+VALUE_UNIT "bytes"
+BEGIN_SAMPLE 0.000000
+END_SAMPLE 0.000000
+BEGIN_SAMPLE 0.701260
+(315)CAF:main5	1200
+(223)Text.Read.Lex.CAF	216
+(279)GHC.Conc.Signal.CAF	640
+(219)GHC.Event.Thread.CAF	616
+(169)PINNED	77680
+(266)GHC.IO.Encoding.Iconv.CAF	120
+(337)main.primiparos/main	32
+(338)main.primiparoides/main	32
+(351)main.primiparoides.\/...	16
+(268)GHC.IO.Encoding.CAF	1000
+(354)main.primiparoides.\/...	104
+(356)main.primiparos/main/...	24
+(336)main.primis/main	24
+(340)filterHighNumbers/sol...	176
+(258)GHC.IO.Handle.FD.CAF	680
+(341)candidates/CAF:candidates	2016
+MAIN	73320
+(371)partitionToNumbers.\....	1024
+(335)main	40112
+(339)solve/main	2792432
+END_SAMPLE 0.701260
+BEGIN_SAMPLE 0.760034
+END_SAMPLE 0.760034
