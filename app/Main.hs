@@ -2,9 +2,145 @@
 
 module Main where
 import Data.List
+import Data.Ord
 import Control.Monad
 import Control.Monad.Loops
 import Control.Exception
+import Data.List.Ordered (minus, union, unionAll)
+
+-- 1
+-- Multiples of 3 and 5
+
+euler1 lim = foldr (+) 0 $ [x | x <- [1,2..lim-1] , rem x 3 == 0 || rem x 5 == 0] 
+
+-- 2
+-- Even Fibonacci numbers
+
+euler2 lim = go 0 (0,1) 
+  where
+    go !s (!x,!y) | next >= lim = s
+                  | rem next 2 == 0 = go (s+next)  (y,next) 
+                  | otherwise       = go (s)       (y,next) 
+      where next = (x+y)
+
+-- 3
+-- Largest prime factor
+
+
+primes = 2 : 3 : minus [5,7..] (unionAll [[p*p, p*p+2*p..] | p <- tail primes])
+
+euler3 on = go primes 1 on  
+  where
+    go (x:xs) !c !n 
+      | c * x  == on = x
+      | rem n x == 0 = go (x:xs) (x * c) (quot n x) 
+      | otherwise   =  go (xs) (c) (n) 
+
+-- 4
+-- Largest palindrome product
+
+
+euler4Numbers :: [Integer]
+euler4Numbers = [100,101..999]
+
+e4'1
+  = last
+  $ sort
+  $ filter isPalindrome 
+  $ fmap product 
+  $ (combinations 2 euler4Numbers) ++ fmap (\e -> [e,e]) euler4Numbers 
+ 
+
+e4'2
+  = head 
+  $ dropWhile (not . isPalindrome)
+  $ reverse
+  $ sort
+  $ fmap product 
+  $ (combinations 2 euler4Numbers) ++ fmap (\e -> [e,e]) euler4Numbers 
+
+
+e4'3
+  = head 
+  $ dropWhile (not . isPalindrome)
+  $ sortDesc
+  $ fmap product  
+  $ (combinations 2 euler4Numbers) ++ fmap (\e -> [e,e]) euler4Numbers
+  where
+    sortDesc :: (Ord a, Num a) => [a] -> [a]
+    sortDesc = sortBy (flip compare)
+
+
+euler4
+  = head 
+  $ dropWhile (not . isPalindrome)
+  $ sortDesc
+  $ fmap product 
+  $ sequence [euler4Numbers,euler4Numbers]
+  where
+    sortDesc :: (Ord a, Num a) => [a] -> [a]
+    sortDesc = sortBy (flip compare)
+
+
+isPalindrome n
+  = let srn = show n in
+      case rem (length srn) 2 of
+        0 -> (drop (div l 2) s) == (reverse $ take (div l 2) s)  
+        _ -> (drop ((div l 2) + 1) s) == (reverse $ take ((div l 2) ) s)
+  where l = length s
+        s = show n
+  
+
+-- 5
+-- Smallest multiple
+
+
+
+
+main = print "hi"
+
+
+
+
+
+
+
+combinations :: Int -> [a] -> [[a]]
+combinations 0 _  = [ [] ]
+combinations n xs = [ y:ys | y:xs' <- tails xs
+                           , ys <- combinations (n-1) xs']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{-
+
+-- 333
+-- soon
+
+
+isPrime 1 = False
+isPrime n = go 2 (div n 2) 
+  where
+    go !i !l | rem n i == 0 = False
+             | i >= l       = True   -- ?
+             | otherwise    = go (i+1) l 
+
 
 partitions :: Float -> [[(Integer,Integer)]]
 partitions n =
@@ -48,10 +184,6 @@ divisibleFree l
   | otherwise = not . elem True $  divisible <$> (combinations 2 $ filter (0/=) l)
 
 
-
--- stack --profile run myexec --rts-options -p
-
-
 solve n
   = isValid n
   $ sequence
@@ -82,17 +214,10 @@ fromR e = case e of
 z = toNumbers $ partitions 10
 
 
-
-
-
-
-
 sense = go [] 
   where
     go lu [    ] = []    
     go lu (x:xs) = x : go [] xs 
-
-
 
 --sow :: [[Integer]] -> [[Integer]]
 sow l = go pe ze 
@@ -116,20 +241,10 @@ fillZ f l = l ++ (replicate (f - len) 0)
   where len =  length l
 
 
-
-
-
-
-
 combinations :: Int -> [a] -> [[a]]
 combinations 0 _  = [ [] ]
 combinations n xs = [ y:ys | y:xs' <- tails xs
                            , ys <- combinations (n-1) xs']
-
-
-
-
-
 
 {-
 Zero is like taking none so no options are discarded and just skips a list
@@ -141,8 +256,6 @@ i.e.  if i took 1 then i cant take a 1 postition anymore,
 
 
 -}
-
-
 
 {-
 sense :: [[Integer]] -> [[Integer]]
@@ -174,7 +287,6 @@ sense3 (x:xs) = do
 
 --mt [] _ = []
 
-{-
 
 solve' n
   = length
