@@ -6,7 +6,11 @@ import Data.Ord
 import Control.Monad
 import Control.Monad.Loops
 import Control.Exception
+import Data.Function
 import Data.List.Ordered (minus, union, unionAll)
+
+main = print "hi"
+
 
 -- 1
 -- Multiples of 3 and 5
@@ -29,19 +33,20 @@ euler2 lim = go 0 (0,1)
 
 primes = 2 : 3 : minus [5,7..] (unionAll [[p*p, p*p+2*p..] | p <- tail primes])
 
-euler3 on = go primes 1 on  
+euler3 1 = [1]
+euler3 on = go primes 1 on [] 
   where
-    go (x:xs) !c !n 
-      | c * x  == on = x
-      | rem n x == 0 = go (x:xs) (x * c) (quot n x) 
-      | otherwise   =  go (xs) (c) (n) 
+    go (x:xs) !c !n r
+      | c * x  == on = (x:r)
+      | rem n x == 0 = go (x:xs) (x * c) (quot n x) (x:r) 
+      | otherwise   =  go (xs) (c) (n) r
 
 -- 4
 -- Largest palindrome product
 
 
-euler4Numbers :: [Integer]
-euler4Numbers = [100,101..999]
+euler4Numbers ::  [   Integer  ]
+euler4Numbers =   [100,101..999]
 
 e4'1
   = last
@@ -89,26 +94,41 @@ isPalindrome n
         _ -> (drop ((div l 2) + 1) s) == (reverse $ take ((div l 2) ) s)
   where l = length s
         s = show n
-  
-
--- 5
--- Smallest multiple
-
-
-
-
-main = print "hi"
-
-
-
-
-
 
 
 combinations :: Int -> [a] -> [[a]]
 combinations 0 _  = [ [] ]
 combinations n xs = [ y:ys | y:xs' <- tails xs
                            , ys <- combinations (n-1) xs']
+
+
+-- 5
+-- Smallest multiple
+
+
+
+-- horrible solution
+e5'1 top = head $ dropWhile (\e -> not $ e `divByEvery`  [2,3..top]) [2,3..top]
+  where 
+    divByEvery n ar =  all (0==) $ (fmap (rem n) ar)
+
+
+euler5 top = go $ sortByLengthDesc $ (head . group . euler3) <$> [2,3..top]
+  where
+    go [    ] = 1
+    go (x:xs) = product x * (go $ filterCurrentPrime  xs)
+      where filterCurrentPrime = filter (not . elem (x!!0))
+
+
+
+sortByLengthDesc :: (Ord a , Num a) => [[a]] -> [[a]]
+sortByLengthDesc = sortBy (flip $ comparing length)
+
+
+-- 6
+-- Sum square difference
+
+
 
 
 
@@ -132,6 +152,11 @@ combinations n xs = [ y:ys | y:xs' <- tails xs
 
 -- 333
 -- soon
+
+
+s  :: (Ord a , Num a) => [[a]] -> [[a]]
+s = sortOn length    
+
 
 
 isPrime 1 = False
