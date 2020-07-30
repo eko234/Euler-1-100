@@ -24,6 +24,7 @@ dependencies:
 - monad-loops
 - data-ordlist
 - inline-c
+- split
 
 library:
   source-dirs: src
