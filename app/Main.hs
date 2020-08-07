@@ -11,39 +11,26 @@ import Control.Monad.Loops
 import Control.Exception
 import Data.Function
 import Data.List.Ordered (minus, union, unionAll)
-import Data.List.Ordered (minus, union, unionAll)
-
-
-a' = do
-  x <- [1,2]
-  z <- [3,4]
-  return [x,z]
-
-
-b' = do
-  z <- [3,4]
-  x <- [1,2]
-  return [x,z]
-
+import qualified Data.Map.Strict as M 
 
 main = do
-  print a'
-  print b'
+  print "welcome to my project euler solutions"
 
 -- 1
 -- Multiples of 3 and 5
 
-euler1 lim = foldr (+) 0 [x | x <- [1,2..lim-1] , rem x 3 == 0 || rem x 5 == 0] 
+euler1 lim = foldr (+) 0 [x | x <- [1,2..lim-1] , rem x 3 == 0 || rem x 5 == 0]
 
 -- 2
 -- Even Fibonacci numbers
 
-euler2 lim = go 0 (0,1) 
+euler2 lim = go 0 (0,1)
   where
     go !s (!x,!y) | next >= lim = s
-                  | rem next 2 == 0 = go (s+next)  (y,next) 
-                  | otherwise       = go (s)       (y,next) 
+                  | rem next 2 == 0 = go (s+next)  (y,next)
+                  | otherwise       = go (s)       (y,next)
       where next = (x+y)
+    
 
 -- 3
 -- Largest prime factor
@@ -52,29 +39,43 @@ euler2 lim = go 0 (0,1)
 primes = 2 : 3 : minus [5,7..] (unionAll [[p*p, p*p+2*p..] | p <- tail primes])
 
 euler3 1 = [1]
-euler3 on = go primes 1 on [] 
+euler3 on = go primes 1 on []
   where
     go (x:xs) !c !n r
       | c * x  == on = (x:r)
-      | rem n x == 0 = go (x:xs) (x * c) (quot n x) (x:r) 
+      | rem n x == 0 = go (x:xs) (x * c) (quot n x) (x:r)
       | otherwise   =  go (xs) (c) (n) r
+      
+
+
 
 -- 4
 -- Largest palindrome product
 
 
+
 euler4Numbers ::  [   Integer  ]
 euler4Numbers =   [100,101..999]
 
+
+
+afunction x = do
+  putStrLn "hello niggurs"
+  
+
+
 euler4
-  = head 
+  = head
   $ dropWhile (not . isPalindrome)
   $ sortDesc
-  $ fmap product 
+  $ fmap product
   $ sequence [euler4Numbers,euler4Numbers]
   where
     sortDesc :: (Ord a, Num a) => [a] -> [a]
     sortDesc = sortBy (flip compare)
+
+
+
 
 isPalindrome :: Integer -> Bool
 isPalindrome n = show n == (reverse $ show n)
@@ -83,6 +84,7 @@ combinations :: Int -> [a] -> [[a]]
 combinations 0 _  = [ [] ]
 combinations n xs = [ y:ys | y:xs' <- tails xs
                            , ys <- combinations (n-1) xs']
+
 
 
 -- 5
@@ -102,7 +104,9 @@ sortByLengthDesc = sortBy (flip $ comparing length)
 -- Sum square difference
 
 euler6 :: Int -> Int
-euler6  n = ((n * (n+1)`div`2)^2) - (n * (n+1) * ( 2 * n+1 ) `div` 6 ) 
+euler6  n = ((n * (n+1)`div`2)^2) - (n * (n+1) * ( 2 * n+1 ) `div` 6 )
+
+
 
 -- 7
 -- 10001st prime
@@ -158,7 +162,7 @@ e8Numbers =  "73167176531330624919225\
              \20752963450"
 
 
-euler8 :: Int 
+euler8 :: Int
 euler8 = go (fmap (\e -> read [e] :: Int) e8Numbers) 0
   where
     go :: [Int] -> Int -> Int
@@ -166,8 +170,7 @@ euler8 = go (fmap (\e -> read [e] :: Int) e8Numbers) 0
       | next > last = go (tail scan) next
       | otherwise   = go (tail scan) last
       where next = product [a,b,c,d,e,f,g,h,i,j,k,l,m]
-    go _ x = x 
-
+    go _ x = x
 
 
 
@@ -175,13 +178,13 @@ euler8 = go (fmap (\e -> read [e] :: Int) e8Numbers) 0
 -- Special Pythagorean triplet
 
 euler9 :: Int -> Int
-euler9 n 
-  =  (product . head) [ [x,y,z] 
-        | x <- [1,  2..div n 3] 
+euler9 n
+  =  (product . head) [ [x,y,z]
+        | x <- [1,  2..div n 3]
         , y <- [x,x+1..div n 2]
         , let z = n -x-y
         , (x*x) + (y*y) == z * z ]
- 
+
 -- 10
 -- Sumation of primes
 
@@ -193,13 +196,14 @@ euler10 lim = sum $ takeWhile (<lim) primes
 -- Largest product in a grid
 
 scan4 :: [a] -> [[a]]
-scan4 (a:b:c:d:ds)  = [a,b,c,d] : scan4 (b:c:d:ds)  
+scan4 (a:b:c:d:ds)  = [a,b,c,d] : scan4 (b:c:d:ds)
 scan4 _             = []
+
 
 diagonalify4 :: (Num a, Ord a) => [[a]] -> [[a]]
 diagonalify4 = filter ((4>=) . length) . transpose . go 0
-  where go n (x:xs) = (drop n x) : go (n+1) xs 
-        go n _      = []   
+  where go n (x:xs) = (drop n x) : go (n+1) xs
+        go n _      = []
 
 greatestH  :: (Num a, Ord a) => [[a]] -> a
 greatestH  =  maximum . fmap (maximum . fmap product . scan4)
@@ -209,15 +213,15 @@ greatestD1 :: (Num a, Ord a) => [[a]] -> a
 greatestD1 =  maximum . fmap (maximum . fmap product . diagonalify4) . scan4
 greatestD2 :: (Num a, Ord a) => [[a]] -> a
 greatestD2 =  greatestD1 . reverse
-
 euler11 matrix
-  = maximum 
+  = maximum
     [ greatestH matrix
     , greatestV matrix
     , greatestD1 matrix
-    , greatestD2 matrix ] 
+    , greatestD2 matrix ]
 
-euler11Numbers 
+
+euler11Numbers
   =   [[08, 02, 22, 97, 38, 15, 00, 40, 00, 75, 04, 05, 07, 78, 52, 12, 50, 77, 91, 08]
       ,[49, 49, 99, 40, 17, 81, 18, 57, 60, 87, 17, 40, 98, 43, 69, 48, 04, 56, 62, 00]
       ,[81, 49, 31, 73, 55, 79, 14, 29, 93, 71, 40, 67, 53, 88, 30, 03, 49, 13, 36, 65]
@@ -245,8 +249,8 @@ floorSqrt :: (Integral a) =>  a -> a
 floorSqrt = floor . sqrt . fromIntegral
 
 triangleNumbers = 1 : [ x + y | x <- [2..]
-                              | y <- triangleNumbers ]
 
+                              | y <- triangleNumbers ]
 
 euler12
   = head
@@ -259,16 +263,16 @@ euler12
 -- 13
 -- Large sum
 
-stringToHuge s =fmap (\n -> read n :: Int) $ chunksOf 10 s 
+stringToHuge s =fmap (\n -> read n :: Int) $ chunksOf 10 s
 
 adjust :: [Int] -> [Int]
-adjust l =  reverse $ go (reverse l) 0 
+adjust l =  reverse $ go (reverse l) 0
   where
     go (x:xs) n =  (currFix+n) : go xs nextFix
       where
-        length' = (length $ show x) - 10
-        currFix = read (drop (length') $ show x) :: Int
-        nextFix = case (take (length') $ show x)  of
+        length' = length (show x) - 10
+        currFix = read (drop length' $ show x) :: Int
+        nextFix = case take length' $ show x  of
                     "" -> 0
                     st -> read  st :: Int
     go [] 0 = []
@@ -281,19 +285,20 @@ pairHuge x y | lx > ly   = (x, r0 (lx - ly) ++ y)
           where
             lx = length x
             ly = length y
-            r0 n = take n $ cycle [0] 
+            r0 n = take n $ cycle [0]
 
 sumHuge :: (Num a) => [a] -> [a] -> [a]
 
-sumHuge x y =  [ (a+b) | a <- x' | b <- y']
+sumHuge x y =  [ a+b | a <- x' | b <- y']
   where (x',y') = pairHuge x y
-  
+
 
 euler13
   = id
   $ foldl (\ a b -> adjust $ sumHuge a b) []
   $ fmap stringToHuge
   $ chunksOf 50 euler13Numbers
+
 
 -- with mighty integers
 euler13'
@@ -311,15 +316,115 @@ euler13Numbers = "37107287533902102798797998220837590246510135740250463769376774
 -- 14
 -- Longest Collatz sequence
 
--- triangularNumbers!!0
+euler14 :: Int -- M.Map Int Int
+euler14 = f14 [1..1000000] -- [500000..1000000] 
 
+f14 x = go (0,0) (M.fromList [(0,0)]) x
+  where
+    go (num,len) dic [] = (num)
+    go (num,len) dic (e:es)
+      | res > len = go (e,res)   dic' es
+      | otherwise = go (num,len) dic' es 
+      where 
+          dic' = M.insert e res dic
+          res  = collatz e dic
+
+collatz :: Int ->  M.Map Int Int -> Int
+collatz n d = go 1 n 
+  where
+    go c 1  = c
+    go c num 
+      | lur /= 0 = lur + (c-1)
+      | rem num 2 == 0 = go (c+1) (div num 2)
+      | otherwise      = go (c+1) ((3*num)+1)
+      where lur = case (M.lookup num d) of
+                    Nothing -> 0
+                    Just x  -> x
+
+
+
+
+-- 15
+-- Lattice paths
+
+data Direction
+  = R
+  | D
+  deriving (Show,Eq)
+
+
+
+-- euler15 w h = 40!/(20!(40-20)!)
+-- sortDesc
+
+
+-- euler16
+-- Power digit sum
+
+
+euler16 = sum $ fmap (\e -> read [e] :: Int ) $ show $ 2^1000 
+
+-- euler17
+-- Number letter counts
+
+
+
+euler17
+  = sum
+  $ fmap (f17.show) [1..1000]
+
+
+f17 :: String -> Int
+f17 n
+  = case n of
+      "0"  -> 0 
+      "1"  -> 3
+      "2"  -> 3
+      "3"  -> 5
+      "4"  -> 4
+      "5"  -> 4
+      "6"  -> 3
+      "7"  -> 5
+      "8"  -> 5
+      "9"  -> 4
+      "10" -> 3
+      "11" -> 6
+      "12" -> 6
+      "13" -> 8
+      "14" -> 8
+      "15" -> 7
+      "16" -> 7 
+      "17" -> 9
+      "18" -> 8
+      "19" -> 8
+      ['2',u] -> 6 + f17 [u]
+      ['3',u] -> 6 + f17 [u]
+      ['4',u] -> 5 + f17 [u]
+      ['5',u] -> 5 + f17 [u]
+      ['6',u] -> 5 + f17 [u]
+      ['7',u] -> 7 + f17 [u]
+      ['8',u] -> 6 + f17 [u]
+      ['9',u] -> 6 + f17 [u]
+      [c,'0','0'] -> 7 + f17 [c]
+      [c,'0',u]   -> 10 + f17 [u] + f17 [c]  
+      [c,d,u] -> 10 + f17 [d,u] + f17 [c]
+      _ -> 11   
+       
+       
+
+euler18 = "solved"
+
+data Tree
+  = Leaf
+  | Node Int Tree Tree
+  deriving Show
 
 
 
 {-
 
 -- 333
--- soon
+-- not too soon
 
 
 s  :: (Ord a , Num a) => [[a]] -> [[a]]
@@ -511,4 +616,37 @@ scanTill' n l = go n l 0
       
 
 -}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -1,38 +1,36 @@
-name:                euler
-version:             0.1.0.0
-github:              "githubuser/euler"
-license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2020 Author name here"
-
-extra-source-files:
-- README.md
-- ChangeLog.md
-
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
-
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/euler#readme>
-
+library:
+  source-dirs: src
+tests:
+  euler-test:
+    source-dirs: test
+    main: Spec.hs
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - euler
+copyright: 2020 Author name here
+maintainer: example@example.com
 dependencies:
+- containers
 - base >= 4.7 && < 5
 - monad-loops
 - data-ordlist
 - inline-c
 - split
-
-library:
-  source-dirs: src
-
+name: euler
+version: 0.1.0.0
+extra-source-files:
+- README.md
+- ChangeLog.md
+author: Author name here
+github: githubuser/euler
+license: BSD3
 executables:
   euler-exe:
-    main:                Main.hs
-    source-dirs:         app
+    source-dirs: app
+    main: Main.hs
     ghc-options:
     - -O2
     - -threaded
@@ -40,14 +38,4 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - euler
-
-tests:
-  euler-test:
-    main:                Spec.hs
-    source-dirs:         test
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - euler
+description: Please see the README on GitHub at <https://github.com/githubuser/euler#readme>
