@@ -19,6 +19,9 @@ dependencies:
 - data-ordlist
 - inline-c
 - split
+- process
+- text
+
 name: euler
 version: 0.1.0.0
 extra-source-files:

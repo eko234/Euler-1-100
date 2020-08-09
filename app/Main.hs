@@ -5,13 +5,18 @@
 module Main where
 import Data.List
 import Data.List.Split
+import qualified Data.Text as T
+import qualified Text.Printf as TP
 import Data.Ord
 import Control.Monad
 import Control.Monad.Loops
 import Control.Exception
 import Data.Function
 import Data.List.Ordered (minus, union, unionAll)
+import System.Process
+import Data.Char
 import qualified Data.Map.Strict as M 
+
 
 main = do
   print "welcome to my project euler solutions"
@@ -357,6 +362,8 @@ data Direction
 -- euler15 w h = 40!/(20!(40-20)!)
 -- sortDesc
 
+euler15 = div (factorial 40) (factorial 20) 
+factorial n = product [1..n]
 
 -- euler16
 -- Power digit sum
@@ -408,16 +415,115 @@ f17 n
       [c,'0','0'] -> 7 + f17 [c]
       [c,'0',u]   -> 10 + f17 [u] + f17 [c]  
       [c,d,u] -> 10 + f17 [d,u] + f17 [c]
-      _ -> 11   
-       
-       
+      _ -> 11           
 
-euler18 = "solved"
+
+
+
+
 
 data Tree
   = Leaf
   | Node Int Tree Tree
   deriving Show
+
+-- 18
+-- Maximum sum path
+
+
+pyramid19 =[ [75]
+           , [95, 64]
+           , [17, 47, 82]
+           , [18, 35, 87, 10]
+           , [20, 04, 82, 47, 65]
+           , [19, 01, 23, 75, 03, 34]
+           , [88, 02, 77, 73, 07, 63, 67]
+           , [99, 65, 04, 28, 06, 16, 70, 92]
+           , [41, 41, 26, 56, 83, 40, 80, 70, 33]
+           , [41, 48, 72, 33, 47, 32, 37, 16, 94, 29]
+           , [53, 71, 44, 65, 25, 43, 91, 52, 97, 51, 14]
+           , [70, 11, 33, 28, 77, 73, 17, 78, 39, 68, 17, 57]
+           , [91, 71, 52, 38, 17, 14, 91, 43, 58, 50, 27, 29, 48]
+           , [63, 66, 04, 68, 89, 53, 67, 30, 73, 16, 69, 87, 40, 31]
+           , [04, 62, 98, 27, 23, 09, 70, 98, 73, 93, 38, 53, 60, 04, 23]]
+
+euler18 pyramid = foldl f18 [] pyramid
+
+p =  [[0,1,2,0]
+      ,[2,3,4]]
+
+f18 l1 l2 = zipWith (+) l1' l2
+  where 
+    l1' = scan2Max $ [0] ++ l1 ++ [0]
+
+scan2Max :: (Ord a) => [a] -> [a]
+scan2Max (a:b:ds)  = max a b : scan2Max (b:ds)
+scan2Max _             = []
+
+
+-- 19
+-- Counting Sundays
+
+allTheFuckingDays :: [(Int,Int)]
+allTheFuckingDays = concat $ fmap (\y -> zip (cycle [y]) [1..12] ) [1901..2000]
+
+makeCommand y m = TP.printf "--date=%s/%s/01" (y) (m)
+
+isSunday y m = do
+  (_,o,_) <- readProcessWithExitCode  "date" [(makeCommand y m)] ""
+  return $ "Sun" == (head $ words o)
+
+
+euler19 = do
+  r <- filterM (\(y,m) -> isSunday (show y) (show m)  ) $ allTheFuckingDays
+  print $ length r
+  print "hi"
+
+-- 20
+-- Factorial digit sum
+
+euler20  = sum . fmap (\c -> read [c] :: Int ) . show . factorial 
+
+-- 21
+-- Amicable numbers
+
+
+properDivisors n = [x | x <- [1..top], rem n x == 0 ]
+  where top =  div n 2
+
+isAmicable n = n == b && a /= b 
+  where a = sum $ properDivisors n
+        b = sum $ properDivisors a
+
+euler21 = sum . filter isAmicable
+
+-- 22
+-- Name scores
+
+euler22 names = fmap (\(pos,name) -> pos * (sum $ fmap alphaPos name)) $ zip [1..] (sort $ words names)
+
+f22 :: Char -> String
+f22 c = case c of
+          '\\' -> ""
+          '\"' -> ""
+          ','  -> " "
+          c    -> [c]
+
+
+alphaPos c | isUpper c = (\e -> e-64) $ ord c
+           | isLower c = (\e -> e-96) $ ord c
+
+-- 23
+-- Names scores
+
+
+
+-- 66
+-- kono pawa
+
+euler66 = do  
+  file <- readFile "./app/triangulito" 
+  print $ maximum  $ euler18 $ fmap (fmap (\e -> read e :: Int) . words) $ lines file 
 
 
 
