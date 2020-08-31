@@ -18,9 +18,11 @@ import Data.Char
 import qualified Data.Map.Strict as M 
 
 
+
 main = do
   print "welcome to my project euler solutions"
 
+  
 -- 1
 -- Multiples of 3 and 5
 
@@ -39,7 +41,6 @@ euler2 lim = go 0 (0,1)
 
 -- 3
 -- Largest prime factor
-
 
 primes = 2 : 3 : minus [5,7..] (unionAll [[p*p, p*p+2*p..] | p <- tail primes])
 
@@ -482,6 +483,7 @@ euler19 = do
 -- 20
 -- Factorial digit sum
 
+euler20 :: Int -> Int
 euler20  = sum . fmap (\c -> read [c] :: Int ) . show . factorial 
 
 -- 21
@@ -514,7 +516,103 @@ alphaPos c | isUpper c = (\e -> e-64) $ ord c
            | isLower c = (\e -> e-96) $ ord c
 
 -- 23
--- Names scores
+-- Non-abundant sums
+
+
+euler23 = sum $ filter ((flip f23) baseCandidates) [1..28123]
+  where baseCandidates = abundantNumbersTill 2812
+
+isAbundant n = n < (sum $ properDivisors n)
+
+abundantNumbersTill :: Int -> [Int]
+abundantNumbersTill n = takeWhile (\d -> d < n) abundantNumbers
+
+abundantNumbers :: [Int]
+abundantNumbers = [x | x <- [1..] , isAbundant x]
+
+f23 :: Int -> [Int] -> Bool
+f23 n baseCandidates = baseCandidates == [] || go n baseCandidates
+  where
+    go _ [] = True
+    go n (c:cs) | n - c `elem` baseCandidates = False
+                | otherwise = go n cs
+
+-- 24
+-- Lexicographic permutations
+
+euler24 = "lato did it"
+
+-- 25
+-- 1000-digit Fibonacci number
+
+euler25
+  = head
+  $ (dropWhile (\(a,b) -> 999 >= (length $ show b))
+  $ zip [0..] fibs)
+
+fibs = 0 : scanl (+) 1 fibs
+
+
+-- 26
+-- Reciprocal cylces
+
+euler26 = "magic with primes"
+
+
+-- 27
+-- Quadratic primes
+
+euler27 = maximum e27
+
+e27 = do
+  b' <- fromIntegral <$> takeWhile (1000>) primes
+  a' <- [-b',-b' +2 ..999]  
+  pure  (length $ takeWhile (\n -> isPrime $ n^2 + (n*a') +b') [0..] ,a'*b')
+    
+f27 n a b = isPrime $ n^2 + (n * a) + b
+
+primesLess_ = takeWhile (1000>) primes
+
+magiapotagia n lca b
+  = case lca' of
+      [] -> (n,lca,b)
+      nn -> magiapotagia (n+1) lca' b 
+  where lca' = filter (\y -> f27 n y b) lca
+
+
+magiapotagioChambona l
+  = magiapotagia 0 [-1000..1000] <$> ( toInteger <$> l)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fa n a b = n^2 + (a * n) + b
+
+lb = takeWhile (30000>) primes
+
+noDivs n ds = foldr (\d r -> d*d > n || (rem n d > 0 && r)) True ds
+
+primesTD  = 2 : 3 : filter (`noDivs` tail primesTD) [5,7..]
+
+isPrime n = n > 1 && noDivs n primesTD
+
+
+
+  
+
+            
+-- 28
+-- Number spiral diagonals
 
 
 
@@ -726,27 +824,7 @@ scanTill' n l = go n l 0
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 
 
 
