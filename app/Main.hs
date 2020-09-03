@@ -221,12 +221,12 @@ greatestD1 =  maximum . fmap (maximum . fmap product . diagonalify4) . scan4
 greatestD2 :: (Num a, Ord a) => [[a]] -> a
 greatestD2 =  greatestD1 . reverse
 euler11 matrix
-  = maximum
-    [ greatestH matrix
-    , greatestV matrix
-    , greatestD1 matrix
-    , greatestD2 matrix ]
-
+  =   maximum
+  $   ($ matrix)
+  <$> [ greatestH 
+      , greatestV 
+      , greatestD1 
+      , greatestD2 ]
 
 euler11Numbers
   =   [[08, 02, 22, 97, 38, 15, 00, 40, 00, 75, 04, 05, 07, 78, 52, 12, 50, 77, 91, 08]
@@ -840,9 +840,16 @@ scanTill' n l = go n l 0
       
 
 -}
-
-
-
+  
+  
+conditionsInDoNotation :: [Int] -> [Int] 
+conditionsInDoNotation [] = []
+conditionsInDoNotation (x:xs) = do
+  if x == 5
+    then return x
+    else do
+      y <-  conditionsInDoNotation xs
+      return y 
 
  
 
