@@ -9,6 +9,7 @@ import qualified Data.Text as T
 import qualified Text.Printf as TP
 import Data.Ord
 import Control.Monad
+import Control.Applicative
 import Control.Monad.Loops
 import Control.Exception
 import Data.Function
@@ -563,11 +564,10 @@ euler26 = "magic with primes"
 -- Quadratic primes
 
 euler27 = maximum e27
-
 e27 = do
   b' <- fromIntegral <$> takeWhile (1000>) primes
   a' <- [-b',-b' +2 ..999]  
-  pure  (length $ takeWhile (\n -> isPrime $ n^2 + (n*a') +b') [0..] ,a'*b')
+  return (length $ takeWhile (\n -> isPrime $ n^2 + (n*a') +b') [0..] ,a'*b')
     
 f27 n a b = isPrime $ n^2 + (n * a) + b
 
@@ -579,17 +579,8 @@ magiapotagia n lca b
       nn -> magiapotagia (n+1) lca' b 
   where lca' = filter (\y -> f27 n y b) lca
 
-
 magiapotagioChambona l
-  = magiapotagia 0 [-1000..1000] <$> ( toInteger <$> l)
-
-
-
-
-
-
-
-
+  = (\n ->  magiapotagia 1 [-n, -n +2 .. 999] n) <$> ( toInteger <$> l)
 
 
 
@@ -614,10 +605,39 @@ isPrime n = n > 1 && noDivs n primesTD
 -- 28
 -- Number spiral diagonals
 
+euler28 = foldl (+) 1 [ 4*n**2-6*n+6| n <- [3,5..1001]]
 
+eudo28 = foldl (+) 1 $ do
+  n <- [3,5..1001]
+  return $ 4*n**2-6*n+6
+
+-- 29
+-- Distinct powers
+euler29 = (length . nub) $ do
+  a <- [2..100]
+  b <- [2..100]
+  return $ a^b
+
+-- 30
+-- Digit fifth powers
+
+euler30' = (\n -> (\rp -> (sum rp == n,n)) $ (\d -> (read [d] :: Int)^5) <$> show n) <$> [2..354294]
+
+euler30 = (\(a, _) -> a) <$> (filter (\(a,b) -> a == sum b) numNDigits)
+  where
+    range_ = [2..354294]
+    getDigitsPow5 n = (\d -> (read [d] :: Int) ^ 5 ) <$> show n 
+    numNDigits = zip range_ (getDigitsPow5 <$> range_) 
+
+eudo30 = sum 
+  [ n | n  <- [2.. 354294]
+      , (n ==) $ sum $ digitsToPow5 n ]
+ where
+   digitsToPow5 n = ((^5) . read . pure) <$> show n 
 
 -- 66
 -- kono pawa
+
 
 euler66 = do  
   file <- readFile "./app/triangulito" 
