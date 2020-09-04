@@ -1,5 +1,5 @@
-{-# LANGUAGE BangPatterns #-}
-{-# LANGUAGE ParallelListComp #-}
+{-# LANGUAGE BangPatterns, ParallelListComp #-}
+
 
 
 module Main where
@@ -83,7 +83,6 @@ euler4
 
 
 
-
 isPalindrome :: Integer -> Bool
 isPalindrome n = show n == (reverse $ show n)
 
@@ -105,7 +104,6 @@ euler5 top = go $ sortByLengthDesc $ (head . group . euler3) <$> [2,3..top]
 
 sortByLengthDesc :: (Ord a , Num a) => [[a]] -> [[a]]
 sortByLengthDesc = sortBy (flip $ comparing length)
-
 
 -- 6
 -- Sum square difference
@@ -178,7 +176,6 @@ euler8 = go (fmap (\e -> read [e] :: Int) e8Numbers) 0
       | otherwise   = go (tail scan) last
       where next = product [a,b,c,d,e,f,g,h,i,j,k,l,m]
     go _ x = x
-
 
 
 -- 9

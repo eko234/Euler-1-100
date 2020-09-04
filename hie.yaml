@@ -1,0 +1,13 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "euler:lib"
+
+    - path: "./app/Main.hs"
+      component: "euler:exe:euler-exe"
+
+    - path: "./app/Paths_euler.hs"
+      component: "euler:exe:euler-exe"
+
+    - path: "./test"
+      component: "euler:test:euler-test"
