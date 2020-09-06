@@ -18,11 +18,8 @@ import System.Process
 import Data.Char
 import qualified Data.Map.Strict as M 
 
-
-
 main = do
   print "welcome to my project euler solutions"
-
   
 -- 1
 -- Multiples of 3 and 5
@@ -38,7 +35,6 @@ euler2 lim = go 0 (0,1)
                   | rem next 2 == 0 = go (s+next)  (y,next)
                   | otherwise       = go (s)       (y,next)
       where next = (x+y)
-    
 
 -- 3
 -- Largest prime factor
@@ -80,8 +76,6 @@ euler4
   where
     sortDesc :: (Ord a, Num a) => [a] -> [a]
     sortDesc = sortBy (flip compare)
-
-
 
 isPalindrome :: Integer -> Bool
 isPalindrome n = show n == (reverse $ show n)
@@ -631,6 +625,11 @@ eudo30 = sum
       , (n ==) $ sum $ digitsToPow5 n ]
  where
    digitsToPow5 n = ((^5) . read . pure) <$> show n 
+
+
+
+-- 31
+-- Coin sums
 
 -- 66
 -- kono pawa
