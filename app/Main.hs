@@ -1,9 +1,6 @@
 {-# LANGUAGE BangPatterns, ParallelListComp #-}
-
-
-
 module Main where
-import Data.List
+import Data.List as HEEHEE
 import Data.List.Split
 import qualified Data.Text as T
 import qualified Text.Printf as TP
@@ -20,10 +17,8 @@ import qualified Data.Map.Strict as M
 
 main = do
   print "welcome to my project euler solutions"
-  
 -- 1
 -- Multiples of 3 and 5
-
 euler1 lim = foldr (+) 0 [x | x <- [1,2..lim-1] , rem x 3 == 0 || rem x 5 == 0]
 
 -- 2
@@ -266,6 +261,8 @@ stringToHuge s =fmap (\n -> read n :: Int) $ chunksOf 10 s
 adjust :: [Int] -> [Int]
 adjust l =  reverse $ go (reverse l) 0
   where
+    go [] 0 = []
+    go [] n = [n]
     go (x:xs) n =  (currFix+n) : go xs nextFix
       where
         length' = length (show x) - 10
@@ -273,8 +270,6 @@ adjust l =  reverse $ go (reverse l) 0
         nextFix = case take length' $ show x  of
                     "" -> 0
                     st -> read  st :: Int
-    go [] 0 = []
-    go [] n = [n]
 
 
 pairHuge x y | lx > ly   = (x, r0 (lx - ly) ++ y)
@@ -630,6 +625,51 @@ eudo30 = sum
 
 -- 31
 -- Coin sums
+
+
+-- 32
+-- Pandigital products
+
+
+getThird (_,_,z) = z
+
+isPandigital (x,y,z)
+  = "123456789" == (sort $ concat $ fmap show [x,y,z])
+
+euler32Numbers = [(x,y,x*y) | x <- [2..100]
+            	            , y <- [100.. (div 9999 x)]]
+
+euler32 = sum $ nub $ getThird <$> filter isPandigital euler32Numbers
+
+
+-- 33
+-- Digit cancelling fractions
+
+
+
+euler33Numbers = [(show x,show y, x/y) | x <- [11..98]
+                                  , y <- [x+1..99]]
+
+e33 [_,_] = True
+e33 _ = False
+
+symDiff a b = (HEEHEE.union a b) \\ (intersect a b)
+
+
+isTrivial [[_,'0',_,'0'],[_,'0',_,'0']] = True
+isTrivial _ = False
+
+
+euler33
+  = foldl (\(x,y)(x',y') -> (x*x', y*y')) (1,1)
+  $ fmap (\(_,x,y,_) -> (read (take 2 x) :: Int , read (take 2 y) :: Int))
+  $ filter (\([a,b],x,y,z) -> z == ((/) (read [a] :: Float) (read [b] :: Float)))
+  $ filter (\([a,b],x,y,_) -> a < b  )
+  $ filter (\(x,_,_,_) -> not $ elem '0' x)
+  $ filter (\(x,_,_,_) -> e33 x)
+  $ filter (\(_,x,y,_) -> (not . isTrivial) [x,y])
+  $ fmap   (\(x,y,z)-> (symDiff x y,x,y,z)) euler33Numbers
+
 
 -- 66
 -- kono pawa
