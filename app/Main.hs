@@ -182,7 +182,7 @@ euler9 n
 -- Sumation of primes
 
 euler10 :: Int -> Int
-euler10 lim = sum $ tkeWhile (<lim) primes
+euler10 lim = sum $ takeWhile (<lim) primes
 
 
 -- 11
@@ -668,6 +668,74 @@ euler33
   $ filter (\(a,_,_,_) -> e33 a)
   $ filter (\(_,b,c,_) -> (not . isTrivial) [b,c])
   $ fmap   (\(b,c,d)-> (symDiff b c,b,c,d)) euler33Numbers
+
+
+
+-- 34
+-- Digit factorials
+
+
+getDigits :: Int -> [Int]
+getDigits  = map (\e -> read [e]) . show
+
+
+isCurious n digits = n == (sum (factorial<$>digits))
+
+guard34 c n
+  = case digits_ of
+    [3]     -> guard34 c 10
+    [_]     -> guard34 nextC (n+1)
+    [5,y]   -> guard34 c 100
+    [x,5]   -> guard34 nextC ((x+1)*10)
+    [_,_]   -> guard34 nextC (n+1)
+    [7,_,_] -> guard34 c 1000
+    [x,7,_] -> guard34 nextC ((x+1)*100)
+    [x,y,7] -> guard34 nextC ((x*100)+((y+1)*10))
+    [_,_,_] -> guard34 nextC (n+1)
+    [_,_,_,_] -> guard34 nextC (n+1)
+    [_,_,_,_,_] -> guard34 nextC (n+1)
+    [_,_,_,_,_,_] -> guard34 nextC (n+1)
+    -- [_,_,_,_,_,_,_] -> guard34 nextC (n+1)
+    -- we got bored
+    _ -> c
+    where digits_ = getDigits n
+          nextC   = if isCurious n digits_
+                    then n:c
+                    else c
+
+
+
+
+
+
+f0_10 = M.fromList $ zip [0..] $ fmap factorial [0..9]
+
+
+-- 35
+-- Circular primes
+primesTill n = takeWhile (<n) primes
+
+rotate [] = []
+rotate [x] = [x]
+rotate l = tail l ++ [head l]
+
+rotations l_ = go l_ []
+  where go l c | l_ == l'   = l':c
+               | otherwise = go (l') (l':c)
+               where l' = rotate l
+
+toNumber_ :: [Int] -> Int
+toNumber_ l = read (concat $ fmap show l)
+
+magiapotagia2 :: [[Int]] -> Bool
+magiapotagia2 
+  = and
+  . fmap (isPrime . toInteger . toNumber_)
+
+euler35
+  = filter (magiapotagia2 . rotations . getDigits)
+  $ primesTill 1000000
+
 
 
 -- 66
